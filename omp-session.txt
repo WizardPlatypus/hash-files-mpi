@@ -1,0 +1,54 @@
+﻿**********************
+Windows PowerShell transcript start
+Start time: 20250423203717
+Username: FYODOR-PC\Fyodor
+RunAs User: FYODOR-PC\Fyodor
+Configuration Name: 
+Machine: FYODOR-PC (Microsoft Windows NT 10.0.17763.0)
+Host Application: C:\Windows\system32\WindowsPowerShell\v1.0\PowerShell.exe
+Process ID: 13944
+PSVersion: 5.1.17763.1971
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.17763.1971
+BuildVersion: 10.0.17763.1971
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+Transcript started, output file is omp-session.txt
+PS C:\Users\Fyodor\Documents\3 курс\Семестр 2\РПП\HashFiles> .\omp.ps1 -exe .\x64\Debug\OpenMP.exe -min 1 -max 12 "C:\Users\Fyodor\The Legend of Vox Machina"
+n | Ticks | Seconds
+--|-------|--------
+1 | 251118759 | 25
+2 | 144692976 | 14
+3 | 110792267 | 11
+4 | 110759675 | 11
+5 | 83658101 | 8
+6 | 112141950 | 11
+7 | 102247116 | 10
+8 | 98763636 | 9
+9 | 104392847 | 10
+10 | 100714611 | 10
+11 | 106706052 | 10
+12 | 103903198 | 10
+PS C:\Users\Fyodor\Documents\3 курс\Семестр 2\РПП\HashFiles> .\omp.ps1 -exe .\x64\Release\OpenMP.exe -min 1 -max 12 "C:\Users\Fyodor\The Legend of Vox Machina"
+n | Ticks | Seconds
+--|-------|--------
+1 | 219376888 | 21
+2 | 120339390 | 12
+3 | 101511956 | 10
+4 | 82710087 | 8
+5 | 94144738 | 9
+6 | 77896772 | 7
+7 | 92901790 | 9
+8 | 79471046 | 7
+9 | 89027724 | 8
+10 | 82113710 | 8
+11 | 86088434 | 8
+12 | 86608744 | 8
+PS C:\Users\Fyodor\Documents\3 курс\Семестр 2\РПП\HashFiles> Stop-Transcript
+**********************
+Windows PowerShell transcript end
+End time: 20250423204432
+**********************
