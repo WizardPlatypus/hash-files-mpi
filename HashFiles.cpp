@@ -1,4 +1,3 @@
-#include <mpi.h>
 #include <openssl/sha.h>
 #include <filesystem>
 #include <vector>
@@ -9,7 +8,17 @@
 #include <string>
 #include <algorithm>
 
-// #define LOG
+// #define MPI
+
+#ifdef MPI
+
+#include <mpi.h>
+
+#else // OMP
+
+#include <omp.h>
+
+#endif
 
 namespace fs = std::filesystem;
 
@@ -55,25 +64,7 @@ void collect_files(const fs::path& path, std::vector<fs::path>& files) {
 	}
 }
 
-std::string serialize(const std::vector<std::string> &strings) {
-	std::ostringstream oss;
-	for (const auto& s : strings) {
-		oss << s << std::endl;
-	}
-	return oss.str();
-}
-
-std::vector<std::string> deserialize(const std::string &data) {
-	std::vector<std::string> result;
-	std::istringstream iss(data);
-	std::string line;
-	while (std::getline(iss, line)) {
-		result.push_back(line);
-	}
-	return result;
-}
-
-std::string sha512(const std::vector<char> &data) {
+std::string sha512(const std::vector<char>& data) {
 	unsigned char hash[SHA512_DIGEST_LENGTH];
 	SHA512(reinterpret_cast<const unsigned char*>(data.data()), data.size(), hash);
 
@@ -86,7 +77,7 @@ std::string sha512(const std::vector<char> &data) {
 
 // According to this thread, this is one of the faster ways to read a file
 // https://stackoverflow.com/a/525103
-std::vector<char> file2bytes(const fs::path &path)
+std::vector<char> file2bytes(const fs::path& path)
 {
 	std::ifstream ifs(path.c_str(), std::ios::in | std::ios::binary | std::ios::ate);
 	if (ifs.fail()) {
@@ -108,7 +99,27 @@ std::vector<char> file2bytes(const fs::path &path)
 	return bytes;
 }
 
-int main(int argc, char* argv[]) {
+#ifdef MPI
+
+std::string serialize(const std::vector<std::string>& strings) {
+	std::ostringstream oss;
+	for (const auto& s : strings) {
+		oss << s << std::endl;
+	}
+	return oss.str();
+}
+
+std::vector<std::string> deserialize(const std::string& data) {
+	std::vector<std::string> result;
+	std::istringstream iss(data);
+	std::string line;
+	while (std::getline(iss, line)) {
+		result.push_back(line);
+	}
+	return result;
+}
+
+int mpi_main(int argc, char* argv[]) {
 	MPI_Init(&argc, &argv);
 
 	const int root_id = 0;
@@ -135,16 +146,6 @@ int main(int argc, char* argv[]) {
 			collect_files(input_path, root_files);
 		}
 		int total_root_files = root_files.size();
-
-#ifdef LOG
-		std::stringstream ss;
-		ss << "Root found " << total_root_files << " file(s):" << std::endl;
-		for (const fs::path& path : root_files) {
-			ss << "  " << path << std::endl;
-		}
-		ss << "---" << std::endl;
-		std::cerr << ss.str() << std::endl;
-#endif
 
 		// This attempts to distribute the load as evenly as possible
 		// by taking into account the size of files.
@@ -182,18 +183,6 @@ int main(int argc, char* argv[]) {
 	std::string raw(flat_files.begin(), flat_files.end());
 	std::vector<std::string> files = deserialize(raw);
 
-#ifdef LOG
-	{
-		std::stringstream ss;
-		ss << "Task #" << task_id << " received " << files.size() << " file(s):" << std::endl;
-		for (const std::string& file : files) {
-			ss << "  " << file << std::endl;
-		}
-		ss << "---" << std::endl;
-		std::cerr << ss.str();
-	}
-#endif
-
 	std::vector<std::string> hashed;
 	hashed.reserve(files.size());
 	for (const std::string& file : files) {
@@ -205,11 +194,6 @@ int main(int argc, char* argv[]) {
 		}
 		else {
 			auto hash = sha512(text);
-#ifdef LOG
-			std::stringstream ss;
-			ss << "Task #" << task_id << " hashed file #" << hashed.size() << ": \'" << hash << "\'";
-			std::cerr << ss.str() << std::endl;
-#endif
 			hashed.push_back(hash);
 		}
 	}
@@ -269,5 +253,82 @@ int main(int argc, char* argv[]) {
 
 	MPI_Finalize();
 	return 0;
+}
+
+#else
+
+int omp_main(int argc, char* argv[]) {
+	if (argc < 3) {
+		std::cerr << "Usage: " << argv[0] << " <threads> <path1> [<path2> ...]" << std::endl;
+		return 1;
+	}
+
+	int threads = std::stoi(argv[1]);
+
+	std::vector<fs::path> files;
+	for (int i = 2; i < argc; ++i) {
+		fs::path input_path(argv[i]);
+		collect_files(input_path, files);
+	}
+	sort(files.begin(), files.end(), compare_file_size);
+
+	std::vector<std::vector<std::string>> jagged(threads);
+
+#pragma omp parallel num_threads(threads)
+	{
+		std::vector<std::string> local_hashed;
+		local_hashed.reserve(files.size());
+#pragma omp for schedule(static, 1)
+		for (int i = 0; i < files.size(); i += 1) {
+			auto text = file2bytes(files[i]);
+			if (text.size() == 0) {
+				// failed to read the file
+				local_hashed.push_back("");
+			}
+			else {
+				auto hash = sha512(text);
+				local_hashed.push_back(hash);
+			}
+		}
+		jagged[omp_get_thread_num()] = local_hashed;
+	}
+
+	std::vector<std::string> hashed;
+	for (const auto& e : jagged) {
+		hashed.insert(hashed.end(), e.begin(), e.end());
+	}
+
+
+	if (hashed.size() != files.size()) {
+		std::cerr << "Mismatch between the number of hashes and the number of files (" << hashed.size() << " =!= " << files.size() << ")." << std::endl;
+		std::cerr << "Displaying files and hashes separately." << std::endl;
+
+		for (int i = 0; i < files.size(); i += 1) {
+			std::cout << files[i].generic_string() << std::endl;
+		}
+		std::cout << std::endl;
+
+		for (int i = 0; i < hashed.size(); i += 1) {
+			std::cout << hashed[i] << std::endl;
+		}
+		std::cout << std::endl;
+	}
+	else {
+		for (int i = 0; i < files.size(); i += 1) {
+			std::cout << files[i].generic_string() << std::endl << hashed[i] << std::endl << std::endl;
+		}
+	}
+
+	return 0;
+}
+
+#endif
+
+int main(int argc, char* argv[]) {
+#ifdef MPI
+	return mpi_main(argc, argv);
+#else
+	return omp_main(argc, argv);
+#endif
 }
 

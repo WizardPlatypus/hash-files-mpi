@@ -1,6 +1,6 @@
 ﻿**********************
 Windows PowerShell transcript start
-Start time: 20250423203717
+Start time: 20250423215548
 Username: FYODOR-PC\Fyodor
 RunAs User: FYODOR-PC\Fyodor
 Configuration Name: 
@@ -17,38 +17,38 @@ PSRemotingProtocolVersion: 2.3
 SerializationVersion: 1.1.0.1
 **********************
 Transcript started, output file is omp-session.txt
-PS C:\Users\Fyodor\Documents\3 курс\Семестр 2\РПП\HashFiles> .\omp.ps1 -exe .\x64\Debug\OpenMP.exe -min 1 -max 12 "C:\Users\Fyodor\The Legend of Vox Machina"
+PS C:\Users\Fyodor\Documents\3 курс\Семестр 2\РПП\HashFiles> .\omp.ps1 -exe .\bin\Debug\OMP.exe -min 1 -max 12 "C:\Users\Fyodor\The Legend of Vox Machina"
 n | Ticks | Seconds
 --|-------|--------
-1 | 251118759 | 25
-2 | 144692976 | 14
-3 | 110792267 | 11
-4 | 110759675 | 11
-5 | 83658101 | 8
-6 | 112141950 | 11
-7 | 102247116 | 10
-8 | 98763636 | 9
-9 | 104392847 | 10
-10 | 100714611 | 10
-11 | 106706052 | 10
-12 | 103903198 | 10
-PS C:\Users\Fyodor\Documents\3 курс\Семестр 2\РПП\HashFiles> .\omp.ps1 -exe .\x64\Release\OpenMP.exe -min 1 -max 12 "C:\Users\Fyodor\The Legend of Vox Machina"
+1 | 237696213 | 23
+2 | 142994144 | 14
+3 | 118240891 | 11
+4 | 111594518 | 11
+5 | 111090416 | 11
+6 | 107153362 | 10
+7 | 112369270 | 11
+8 | 107902148 | 10
+9 | 108687417 | 10
+10 | 102309184 | 10
+11 | 105890221 | 10
+12 | 103824777 | 10
+PS C:\Users\Fyodor\Documents\3 курс\Семестр 2\РПП\HashFiles> .\omp.ps1 -exe .\bin\Release\OMP.exe -min 1 -max 12 "C:\Users\Fyodor\The Legend of Vox Machina"
 n | Ticks | Seconds
 --|-------|--------
-1 | 219376888 | 21
-2 | 120339390 | 12
-3 | 101511956 | 10
-4 | 82710087 | 8
-5 | 94144738 | 9
-6 | 77896772 | 7
-7 | 92901790 | 9
-8 | 79471046 | 7
-9 | 89027724 | 8
-10 | 82113710 | 8
-11 | 86088434 | 8
-12 | 86608744 | 8
+1 | 233479887 | 23
+2 | 132001706 | 13
+3 | 98215813 | 9
+4 | 105532869 | 10
+5 | 95057497 | 9
+6 | 87390268 | 8
+7 | 89011266 | 8
+8 | 91075460 | 9
+9 | 90258810 | 9
+10 | 89722936 | 8
+11 | 91529955 | 9
+12 | 91633545 | 9
 PS C:\Users\Fyodor\Documents\3 курс\Семестр 2\РПП\HashFiles> Stop-Transcript
 **********************
 Windows PowerShell transcript end
-End time: 20250423204432
+End time: 20250423220212
 **********************
