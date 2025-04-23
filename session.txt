@@ -1,0 +1,54 @@
+﻿**********************
+Windows PowerShell transcript start
+Start time: 20250423184209
+Username: FYODOR-PC\Fyodor
+RunAs User: FYODOR-PC\Fyodor
+Configuration Name: 
+Machine: FYODOR-PC (Microsoft Windows NT 10.0.17763.0)
+Host Application: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+Process ID: 7012
+PSVersion: 5.1.17763.1971
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.17763.1971
+BuildVersion: 10.0.17763.1971
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+Transcript started, output file is session.txt
+PS C:\Users\Fyodor\source\repos\HashFiles> .\bench.ps1 -exe ".\x64\Debug\HashFiles.exe" -min 1 -max 12 "C:\Users\Fyodor\The Legend of Vox Machina"
+n | Ticks | Seconds
+--|-------|--------
+1 | 218876391 | 21
+2 | 122138850 | 12
+3 | 93695846 | 9
+4 | 80011925 | 8
+5 | 92598469 | 9
+6 | 100724040 | 10
+7 | 106618927 | 10
+8 | 96189690 | 9
+9 | 91336578 | 9
+10 | 93504815 | 9
+11 | 96252931 | 9
+12 | 98123712 | 9
+PS C:\Users\Fyodor\source\repos\HashFiles> .\bench.ps1 -exe ".\x64\Release\HashFiles.exe" -min 1 -max 12 "C:\Users\Fyodor\The Legend of Vox Machina"
+n | Ticks | Seconds
+--|-------|--------
+1 | 216540055 | 21
+2 | 114941324 | 11
+3 | 94982355 | 9
+4 | 90647788 | 9
+5 | 86509218 | 8
+6 | 96423970 | 9
+7 | 83561180 | 8
+8 | 87569131 | 8
+9 | 87134730 | 8
+10 | 86953082 | 8
+11 | 91157945 | 9
+12 | 89888440 | 8
+PS C:\Users\Fyodor\source\repos\HashFiles> Stop-Transcript
+**********************
+Windows PowerShell transcript end
+End time: 20250423184703
+**********************
